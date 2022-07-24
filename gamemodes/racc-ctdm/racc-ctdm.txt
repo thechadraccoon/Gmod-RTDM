@@ -1,0 +1,22 @@
+"racc-ctdm"
+{
+	"base"		"base"
+	"title"		"RTDM"
+	"maps"		"^de_"
+	"category"	"PVP"
+	"menusystem"	"1"
+	"workshopid"	""
+
+	"settings"
+	{
+		1
+		{
+			"name"		"rtdm_ffa"
+			"text"		"Free for all"
+			"help"		"Should the game be loaded in ffa?"
+			"type"		"CheckBox"
+			"default"	"false"
+		}
+
+	}
+}
