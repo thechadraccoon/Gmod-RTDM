@@ -43,7 +43,7 @@ net.Receive("rtdm_jointeam", function(ply)
     local function rtdm_teams_queue_handler()-- Checks that it's worth processing a change in the player's team. Tells them when they're retarded.
         if rtdm_curteam ~= 2 and rtdm_nextteam == 2 then
             if tojoinblue[ply:SteamID64()] then
-                table.RemoveByValue(tojoinred, ply:SteamID64())
+                table.RemoveByValue(tojoinblue, ply:SteamID64())
                 table.insert(tojoinblue, ply:SteamID64())
                 rtdm_teams_queued(ply)
             elseif tojoinred[ply:SteamID64()] then
@@ -73,6 +73,8 @@ net.Receive("rtdm_jointeam", function(ply)
             ply:SetTeam(4)
         elseif rtdm_curteam ~= 1 and rtdm_nextteam == 1 then
             ply:SetTeam(1)
+            ply:StripWeapons()
+            ply:Spectate( OBS_MODE_ROAMING )
         else
             rtdm_teams_alreadyin(ply)
         end
