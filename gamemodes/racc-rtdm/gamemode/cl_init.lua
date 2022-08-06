@@ -1,6 +1,6 @@
 include("shared.lua")
-include("cl/teamscreen.lua")
-include("cl/loadout.lua")
+include("cl_team_menu.lua")
+include("cl_loadout_menu.lua")
 
 hook.Add("InitPostEntity", "rtdm_player_initiated", function()
     net.Start("rtdm_player_initiated")
@@ -8,13 +8,7 @@ hook.Add("InitPostEntity", "rtdm_player_initiated", function()
 end)
 
 net.Receive("rtdm_player_initiated", function(len, ply)
-    if GetGlobalBool("rtdm_ffa") then
-        title = "Free for all"
-    else
-        title = "Team Death Match"
-    end
-
-    team_select_screen(title)
+    rtdm_team_select_screen()
 end)
 
 net.Receive("rtdm_chatmessage", function()

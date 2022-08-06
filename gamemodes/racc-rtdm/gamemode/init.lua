@@ -3,52 +3,68 @@
 --------------------------------------------4
 -- Send these lua files to client.
 AddCSLuaFile("cl_init.lua")
-AddCSLuaFile("cl/loadout_menu.lua")
-AddCSLuaFile("cl/team_menu.lua")
+AddCSLuaFile("cl_loadout_menu.lua")
+AddCSLuaFile("cl_team_menu.lua")
 AddCSLuaFile("shared.lua")
 -- Load these serverside.
 include("shared.lua")
-include("team_handler.lua")
-include("loadout_handler.lua")
+include("sv_team_handler.lua")
+include("sv_loadout_handler.lua")
+include("sv_map_cleaner.lua")
+include("sv_chat_messages.lua")
+include("sv_debug.lua")
 -- Document network messages
 util.AddNetworkString("rtdm_player_initiated")
-util.AddNetworkString("rtdm_jointeam")
 util.AddNetworkString("rtdm_chatmessage")
--- Create the Variables for the gamemode
-CreateConVar("rtdm_ffa", 0, FCVAR_PROTECTED, "Make the game FFA?", 0, 1)
 
--- Read convars and SetBooleans globaly
-if GetConVar("rtdm_ffa") == 0 then
-    SetGlobalBool("rtdm_ffa", false)
-else
-    SetGlobalBool("rtdm_ffa", true)
-end
+local playermodels = {
+	"models/player/group01/male_01.mdl",
+	"models/player/group01/male_02.mdl",
+	"models/player/group01/male_03.mdl",
+	"models/player/group01/male_04.mdl",
+	"models/player/group01/male_05.mdl",
+	"models/player/group01/male_06.mdl",
+	"models/player/group01/male_07.mdl",
+	"models/player/group01/male_08.mdl",
+	"models/player/group01/male_09.mdl",
+	"models/player/group02/male_02.mdl",
+	"models/player/group02/male_04.mdl",
+	"models/player/group02/male_06.mdl",
+	"models/player/group02/male_08.mdl",
+	"models/player/group03/male_01.mdl",
+	"models/player/group03/male_02.mdl",
+	"models/player/group03/male_03.mdl",
+	"models/player/group03/male_04.mdl",
+	"models/player/group03/male_05.mdl",
+	"models/player/group03/male_06.mdl",
+	"models/player/group03/male_07.mdl",
+	"models/player/group03/male_08.mdl",
+	"models/player/group03/male_09.mdl"
+}
 
--- When we know the player has fully loaded welcome them to the server.
+-- When we know the player has fully loaded start client stuff.
 net.Receive("rtdm_player_initiated", function(len, ply)
     net.Start("rtdm_player_initiated")
     net.Send(ply)
 end)
 
-ents.GetAll():Remove()
-
-
 function GM:PlayerInitialSpawn( ply )
 
-    ply:ConCommand( "cw_customhud 0" )
-	ply:ConCommand( "cw_customhud_ammo 0" )
-	ply:ConCommand( "cw_crosshair 1" )
-	ply:ConCommand( "cw_blur_reload 0" )
-	ply:ConCommand( "cw_blur_customize 0" )
-	ply:ConCommand( "cw_blur_aim_telescopic 0" )
-	ply:ConCommand( "cw_simple_telescopics 1" )
-	ply:ConCommand( "cw_customhud_ammo 1" )
-	ply:ConCommand( "cw_laser_quality 1" )
-	ply:ConCommand( "cw_alternative_vm_pos 0" )
-	ply:ConCommand( "cl_deathview 0" )
-
-    ply:SetTeam( 1 )
+	ply:SetTeam( 1 )
 	ply:Spectate( OBS_MODE_ROAMING )
+	ply:SetNWBool("rtdm_team_playing", false)
+	ply:SetNWInt("rtdm_team_switch_id", 1)
+
+	if file.Exists("rtdm/players/"..ply:SteamID64() , "DATA") then
+		if file.Exists("rtdm/players/"..ply:SteamID64().."/loadout.json", "DATA") then
+			return
+		else
+			file.Write("rtdm/players/"..ply:SteamID64().."/loadout.json", "")
+		end
+	else
+		file.CreateDir("rtdm/players/"..ply:SteamID64())
+		file.Write("rtdm/players/"..ply:SteamID64().."/loadout.json", "")
+	end
 
 end
 
@@ -56,88 +72,56 @@ function GM:PlayerDisconnected( ply )
 end
 
 function GM:PlayerShouldTakeDamage( ply, attacker )
-	if( GetGlobalBool("rtdm_ffa") == 1 ) then
-		return true
-	end
-	
-	if ply and attacker and ply ~= NULL and attacker ~= NULL then
-		if IsValid( attacker ) and IsValid( ply ) and attacker:IsPlayer() and ply:IsPlayer() then
-			if ply and attacker and ply:Team() ~= nil and attacker:Team() ~= nil then
-				if( GetGlobalBool("rtdm_ffa") == 0 and ply:Team() == attacker:Team() ) then
-					return false
-				end
+	if ply:IsValid() then
+		if attacker:IsValid() then
+			if ply:Team() == attacker:Team() then
+				return false
+			else
+				return true
 			end
+		else
+			return
 		end
-	end
-	
-	return true
-end
-
-
-
-function GM:PlayerSpawn( ply )
-
-	if( ply:Team() == 0 ) then
-		ply:Spectate( OBS_MODE_IN_EYE )
-		SetupSpectator( ply )
+	else
 		return
 	end
+end
+
+function GM:PlayerSpawn( ply )
 	
 	ply:AllowFlashlight( true )
 	
-	self.BaseClass:PlayerSpawn( ply )
-	
-		local playermodels = {
-		"models/player/group03/male_01.mdl",
-		"models/player/group03/male_02.mdl",
-		"models/player/group03/male_03.mdl",
-		"models/player/group03/male_04.mdl",
-		"models/player/group03/male_05.mdl",
-        "models/player/group03/male_06.mdl",
-		"models/player/group03/male_07.mdl",
-		"models/player/group03/male_08.mdl",
-		"models/player/group03/male_09.mdl"
-		}
-        ply:SetModel(table.Random(playermodels))
-
-	ply:SetPlayerColor( col[ply:Team()] )
-	giveLoadout( ply )
+	ply:SetPlayerColor( team.GetColor( ply:Team()):ToVector() )
 
     ply:SetJumpPower( 170 ) -- Decreased Jump hight due to jumping bastards.
 	
-	ply:SetWalkSpeed( defaultWalkSpeed )
-	ply:SetRunSpeed( defaultRunSpeed )
+	ply:SetWalkSpeed( 200 )
+	ply:SetRunSpeed( 300 )
 
 	if GetGlobalBool( "RoundFinished" ) then
 		ply:SetWalkSpeed( 200 )
 		ply:SetRunSpeed( 360 )
 	end
-
-	timer.Simple( 1, function()
-		if ply:IsPlayer() then
-			for k, v in pairs( ply:GetWeapons() ) do
-				local x = v:GetPrimaryAmmoType()
-				local y = v:Clip1()
-				local give = true
-				
-				if give == true then
-					ply:GiveAmmo( ( y * 5 ), x, true )
-				end
-			end
-		end
-	end )
 	
 	ply:SetColor( Color( 255, 255, 255, 200 ) )
-	ply:SetRenderMode( RENDERMODE_TRANSALPHA )
+	ply:SetRenderMode( RENDERMODE_TRANSCOLOR )
 	ply:SetNoCollideWithTeammates( true )
-	end )
-	
-	if GetGlobalBool( "RoundFinished" ) then
-		timer.Simple( 0, function()
-			ply:StripWeapons()
-			ply:Give( "weapon_crowbar" )
-		end )
+	timer.Simple(5, function()
+		ply:SetColor( Color( 255, 255, 255, 255 ) )
+		ply:SetRenderMode( RENDERMODE_TRANSCOLOR )
+	end)
+
+
+	if ( ply:Team() ~= 1 ) then
+		giveLoadout( ply )
+		ply:UnSpectate()
+		ply:SetModel(table.Random(playermodels))
+		ply:SetupHands()
+	else
+		ply:StripWeapons()
+        ply:Spectate( OBS_MODE_ROAMING )
 	end
+
 end
 
 function GM:PlayerDeath( vic, inf, att )
@@ -145,14 +129,20 @@ function GM:PlayerDeath( vic, inf, att )
 		if( vic == att ) then
 			return
 		end
+		
+		for k, v in pairs(att:GetWeapons()) do 
+			att:GiveAmmo( v:Clip1() * 1 , v:GetPrimaryAmmoType(), true )
+		end
+		
 		vic:SetFOV( 0, 0 )
-		net.Start( "tdm_deathnotice" )
+		--[[net.Start( "tdm_deathnotice" )
 			net.WriteEntity( vic )
 			net.WriteString( att.LastUsedWep )
 			net.WriteEntity( att )
 			net.WriteString( tostring( vic:LastHitGroup() == HITGROUP_HEAD ) )
-		net.Broadcast()
+		net.Broadcast()]]--
     end
+
 end
 
 function GM:ScalePlayerDamage( ply, hitgroup, dmginfo )
@@ -213,4 +203,28 @@ end
 function GM:GetFallDamage( ply, speed )
 	speed = speed - 580
 	return ( speed * ( 100 / ( 1024 - 580 ) ) )
+end
+
+function GM:PlayerSetHandsModel( ply, ent )
+
+	local simplemodel = player_manager.TranslateToPlayerModelName( ply:GetModel() )
+	local info = player_manager.TranslatePlayerHands( simplemodel )
+	if ( info ) then
+		ent:SetModel( info.model )
+		ent:SetSkin( info.skin )
+		ent:SetBodyGroups( info.body )
+	end
+
+end
+
+function GM:PlayerUse(ply,ent)
+	return false
+end
+
+function GM:ShowHelp( ply )
+	ply:ConCommand("rtdm_team")
+end
+
+function GM:ShowTeam( ply )
+	ply:ConCommand("rtdm_loadout")
 end
