@@ -44,10 +44,8 @@
             surface.PlaySound("buttons/button15.wav")
             sprimary = v[1]
             primaryequip = tostring(v[2])
-            mainselectedlabel:SetText("Main Weapon Selected: " .. v[1])
+            mainselectedlabel:SetText("Main: " .. v[1])
             mainselectedlabel:SizeToContents()
-            weapondesc:SetText(v[4])
-            weapondesc:SizeToContents()
         end
 
         Primaries:AddItem(option[v[2]])
@@ -70,10 +68,8 @@
             surface.PlaySound("buttons/button15.wav")
             ssecondary = v[1]
             secondaryequip = tostring(v[2])
-            secselectedlabel:SetText("Secondary Weapon Selected: " .. v[1])
+            secselectedlabel:SetText("Secondary: " .. v[1])
             secselectedlabel:SizeToContents()
-            weapondesc:SetText(v[4])
-            weapondesc:SizeToContents()
         end
 
         Secondaries:AddItem(option[v[2]])
@@ -96,10 +92,8 @@
             surface.PlaySound("buttons/button15.wav")
             sextra = v[1]
             extraequip = tostring(v[2])
-            extraselectedlabel:SetText("Extra Selected: " .. v[1])
+            extraselectedlabel:SetText("Extra: " .. v[1])
             extraselectedlabel:SizeToContents()
-            weapondesc:SetText(v[4])
-            weapondesc:SizeToContents()
         end
 
         Extras:AddItem(option[v[2]])
@@ -260,21 +254,20 @@
         end
     end
 
-    weapondesc = vgui.Create("DLabel", main)
-    weapondesc:SetText("")
-    weapondesc:SetPos(GridSizeW + ((main:GetWide() / 100) * 10), (main:GetTall() / 100) * 15)
-    weapondesc:SizeToContents()
     mainselectedlabel = vgui.Create("DLabel", main)
-    mainselectedlabel:SetText("Main Weapon Selected: " .. sprimary)
-    mainselectedlabel:SetPos(GridSizeW + ((main:GetWide() / 100) * 10), weapondesc:GetY() + weapondesc:GetTall() + (main:GetTall() / 100) * 5)
+    mainselectedlabel:SetFont("DermaLarge")
+    mainselectedlabel:SetText("Main: " .. sprimary)
+    mainselectedlabel:SetPos(GridSizeW + ((main:GetWide() / 100) * 3), (main:GetTall() / 100) * 15)
     mainselectedlabel:SizeToContents()
     secselectedlabel = vgui.Create("DLabel", main)
-    secselectedlabel:SetText("Secondary Weapon Selected: " .. ssecondary)
-    secselectedlabel:SetPos(GridSizeW + ((main:GetWide() / 100) * 10), mainselectedlabel:GetY() + mainselectedlabel:GetTall())
+    secselectedlabel:SetFont("DermaLarge")
+    secselectedlabel:SetText("Secondary: " .. ssecondary)
+    secselectedlabel:SetPos(mainselectedlabel:GetX(), mainselectedlabel:GetY() + mainselectedlabel:GetTall())
     secselectedlabel:SizeToContents()
     extraselectedlabel = vgui.Create("DLabel", main)
-    extraselectedlabel:SetText("Extra Selected: " .. sextra)
-    extraselectedlabel:SetPos(GridSizeW + ((main:GetWide() / 100) * 10), secselectedlabel:GetY() + secselectedlabel:GetTall())
+    extraselectedlabel:SetFont("DermaLarge")
+    extraselectedlabel:SetText("Extra: " .. sextra)
+    extraselectedlabel:SetPos(secselectedlabel:GetX(), secselectedlabel:GetY() + secselectedlabel:GetTall())
     extraselectedlabel:SizeToContents()
 end)
 

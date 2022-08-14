@@ -5,19 +5,23 @@ rtdm.config.loadout = {}
 -------------------
 -- Game Settings --
 -------------------
+--time
+rtdm.config.gametime = 1800 -- How long should the match last? ( default: 30 mins )
+rtdm.config.matchendtime = 30 -- How long should the match end last? ( default: 30 seconds )
 rtdm.config.ticketcount = 100 -- the amount of tickets that need to be depleted from the other team. ( Default: 100 )
-rtdm.config.gametime = 300 -- How long should the match last? ( default: 30 mins )
 rtdm.config.suicidetimer = 15 -- How long should a player having typed "kill" or "explode" in the console have to wait before being respawned at the cost of a ticket?
 rtdm.config.ffa = false -- Are we playing free for all? ( Default: false )
 ----------------
 -- Team Stuff --
 ----------------
-rtdm.config.team2name = "Necos" -- Team 2's name.
-rtdm.config.team3name = "Nyns" -- Team 3's name
-rtdm.config.team2color = Color(150, 0, 0, 250) -- Team 2's color
-rtdm.config.team3color = Color(140, 70, 190, 250) -- Team 3's color
-rtdm.config.team2plymdl = "models/necoarc2/necoarc2_model.mdl" -- Player model for Team 2
-rtdm.config.team3plymdl = "models/player/nyn.mdl" -- Player model for Team 3
+rtdm.config.team1name = "Reds" -- Team 2's name.
+rtdm.config.team2name = "Blues" -- Team 3's name
+rtdm.config.team1color = Color(150, 0, 0, 250) -- Team 2's color
+rtdm.config.team2color = Color(0, 0, 150, 250) -- Team 3's color
+rtdm.config.team1plymdl = "models/zambie/rocket/rocket_raccoon.mdl" -- Player model for Team 2
+rtdm.config.team1plymldskin = "1"
+rtdm.config.team2plymdl = "models/zambie/rocket/rocket_raccoon.mdl" -- Player model for Team 3
+rtdm.config.team2plymldskin = "3"
 
 -------------
 -- Weapons --
@@ -54,7 +58,13 @@ rtdm.config.loadout.extra_weapons = {
     {"Arc Star", "arccw_apex_nade_arcstar", "models/weapons/w_apex_nade_arcstar.mdl", "Sticks, then explodes after a short delay. Causes damage and blurred vision. "},
     {"Frag Grenade", "arccw_apex_nade_frag", "models/weapons/w_apex_nade_frag.mdl", "Explosive ordnance. Throw to start fuse."},
     {"Thermite Grenade", "arccw_apex_nade_thermite", "models/weapons/w_apex_nade_thermite.mdl", "Creates a horizontal wall of flames horizontal, perpendicular to the direction it was thrown from."},
+    {"Riot Shield", "arccw_go_shield", "models/weapons/arccw_go/v_shield.mdl", "A riot shield"},
 }
+
+rtdm.config.loadout.botprimary = "arccw_apex_r99"
+rtdm.config.loadout.botsecondary = "arccw_apex_re45"
+rtdm.config.loadout.botextra = "arccw_apex_nade_frag"
+rtdm.config.loadout.enroundweapon = "weapon_jihadbomb"
 
 ------------------
 -- SERVER STUFF --

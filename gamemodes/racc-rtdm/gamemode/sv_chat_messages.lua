@@ -9,6 +9,8 @@
         ply:ConCommand("rtdm_team")
     elseif text:lower() == "!loadout" then
         ply:ConCommand("rtdm_loadout")
+    elseif text:lower() == "!respawn" then
+        ply:ConCommand("rtdm_respawn")
     end
 
     for k, v in next, howweapons do

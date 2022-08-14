@@ -47,23 +47,35 @@ function giveLoadout(ply)
     ply:StripWeapons()
     ply:StripAmmo()
     ply:Give("arccw_apex_melee_wrench")
-    local Loadout = util.JSONToTable(file.Read("rtdm/players/" .. ply:SteamID64() .. "/loadout.json", "DATA"))
+
+    if not ply:IsBot() then
+        Loadout = util.JSONToTable(file.Read("rtdm/players/" .. ply:SteamID64() .. "/loadout.json", "DATA"))
+    end
+
+    if ply:IsBot() then
+        Loadout = {}
+        Loadout[1] = rtdm.config.loadout.botprimary
+        Loadout[2] = rtdm.config.loadout.botsecondary
+        Loadout[3] = rtdm.config.loadout.botextra
+    end
 
     for i, v in next, Loadout do
         ply:Give(v)
     end
 
-    ply:SelectWeapon(Loadout[3])
+    timer.Simple(.5, function()
+        ply:SelectWeapon(Loadout[3])
 
-    timer.Simple(1, function()
-        ply:SelectWeapon(Loadout[2])
+        timer.Simple(.5, function()
+            ply:SelectWeapon(Loadout[2])
 
-        timer.Simple(1, function()
-            ply:SelectWeapon(Loadout[1])
+            timer.Simple(.5, function()
+                ply:SelectWeapon(Loadout[1])
+            end)
         end)
     end)
 
-    timer.Simple(3, function()
+    timer.Simple(2.5, function()
         for k, v in pairs(ply:GetWeapons()) do
             ply:SetAmmo(0, v:GetPrimaryAmmoType(), true)
 

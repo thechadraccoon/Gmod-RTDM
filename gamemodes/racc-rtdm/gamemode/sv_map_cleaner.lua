@@ -1,7 +1,12 @@
 ﻿function rtdm_cleanup_cleaner()
     for k, v in pairs(ents.FindByClass("prop_*")) do
-        local obj = v:GetPhysicsObject()
-        obj:EnableMotion(false)
+        if v:IsValid() then
+            local obj = v:GetPhysicsObject()
+        end
+
+        if obj ~= nil then
+            obj:EnableMotion(false)
+        end
     end
 
     for k, v in pairs(ents.FindByClass("weapon_*")) do

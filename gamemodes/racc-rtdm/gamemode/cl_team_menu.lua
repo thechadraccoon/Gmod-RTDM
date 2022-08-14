@@ -26,14 +26,32 @@
         draw.DrawText("Pick your team below!", "Trebuchet24", w * .5, h * .5, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER)
     end
 
+    local join1 = vgui.Create("DButton", rtdm_teamscreen)
+    join1:SetText("")
+    join1:SetTextColor(Color(255, 255, 255))
+    join1:SetPos(top:GetX(), top:GetY() + top:GetTall())
+    join1:SetSize(top:GetWide(), top:GetTall() * 1.5)
+
+    function join1:Paint(w, h)
+        draw.RoundedBox(0, 0, 0, w, h, rtdm.config.team1color) -- Draw a blue button
+        draw.DrawText(team.GetName(1), "Trebuchet24", w * .5, h * .5, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER)
+    end
+
+    join1.DoClick = function()
+        net.Start("rtdm_team")
+        net.WriteInt(1, 4)
+        net.SendToServer()
+        rtdm_teamscreen:Remove()
+    end
+
     local join2 = vgui.Create("DButton", rtdm_teamscreen)
     join2:SetText("")
     join2:SetTextColor(Color(255, 255, 255))
-    join2:SetPos(top:GetX(), top:GetY() + top:GetTall())
-    join2:SetSize(top:GetWide(), top:GetTall() * 1.5)
+    join2:SetPos(join1:GetX(), join1:GetY() + join1:GetTall())
+    join2:SetSize(join1:GetSize())
 
     function join2:Paint(w, h)
-        draw.RoundedBox(0, 0, 0, w, h, rtdm.config.team2color) -- Draw a blue button
+        draw.RoundedBox(0, 0, 0, w, h, rtdm.config.team2color) -- Draw a red button
         draw.DrawText(team.GetName(2), "Trebuchet24", w * .5, h * .5, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER)
     end
 
@@ -44,29 +62,11 @@
         rtdm_teamscreen:Remove()
     end
 
-    local join3 = vgui.Create("DButton", rtdm_teamscreen)
-    join3:SetText("")
-    join3:SetTextColor(Color(255, 255, 255))
-    join3:SetPos(join2:GetX(), join2:GetY() + join2:GetTall())
-    join3:SetSize(join2:GetSize())
-
-    function join3:Paint(w, h)
-        draw.RoundedBox(0, 0, 0, w, h, rtdm.config.team3color) -- Draw a red button
-        draw.DrawText(team.GetName(3), "Trebuchet24", w * .5, h * .5, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER)
-    end
-
-    join3.DoClick = function()
-        net.Start("rtdm_team")
-        net.WriteInt(3, 4)
-        net.SendToServer()
-        rtdm_teamscreen:Remove()
-    end
-
     local joinspectators = vgui.Create("DButton", rtdm_teamscreen)
     joinspectators:SetText("")
     joinspectators:SetTextColor(Color(255, 255, 255))
-    joinspectators:SetPos(join3:GetX(), join3:GetY() + join3:GetTall())
-    joinspectators:SetSize(join3:GetSize())
+    joinspectators:SetPos(join2:GetX(), join2:GetY() + join2:GetTall())
+    joinspectators:SetSize(join2:GetSize())
 
     function joinspectators:Paint(w, h)
         draw.RoundedBox(0, 0, 0, w, h, Color(175, 175, 175, 250)) -- Draw a gray button
@@ -75,7 +75,7 @@
 
     joinspectators.DoClick = function()
         net.Start("rtdm_team")
-        net.WriteInt(1, 4)
+        net.WriteInt(0, 4)
         net.SendToServer()
         rtdm_teamscreen:Remove()
     end

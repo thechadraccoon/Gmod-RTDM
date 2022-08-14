@@ -13,7 +13,7 @@ net.Receive("rtdm_team", function(len, ply)
     end
 
     if rtdm_curteam ~= rtdm_nextteam then
-        if rtdm_nextteam ~= 1 then
+        if rtdm_nextteam ~= 0 then
             --        true = in false = out
             if ply:GetNWBool("rtdm_team_playing") then
                 ply:SetNWBool("rtdm_team_playing", true)
@@ -32,7 +32,7 @@ net.Receive("rtdm_team", function(len, ply)
             makespec(ply)
         end
     else
-        if rtdm_curteam == 1 then
+        if rtdm_curteam == 0 then
             ply:ChatPrint("You're already a spectator!")
         else
             ply:ChatPrint("You're already on that team!")

@@ -3,7 +3,7 @@
 local rtdm_hud_hidestuff = {
     ["CHudHealth"] = true,
     ["CHudBattery"] = true,
-    ["CHudCrosshair"] = true,
+    ["CHudCrosshair"] = false,
     ["CHudDamageIndicator"] = true,
     ["CHudSecondaryAmmo"] = true,
     ["CHudSquadStatus"] = true,
@@ -21,7 +21,7 @@ hook.Add("HUDDrawTargetID", "HidePlayerInfo", function() return false end)
 hook.Add("HUDPaint", "HUDPaint_DrawABox", function()
     local ply = LocalPlayer()
 
-    if (ply:Team() == 2) or (ply:Team() == 3) or (ply:Team() == 4) then
+    if (ply:Team() == 1) or (ply:Team() == 2) or (ply:Team() == 3) and ply:Alive() then
         if ply:GetObserverMode() == 0 then
             local hp = ply:Health()
             local armor = ply:Armor()
@@ -96,17 +96,49 @@ hook.Add("HUDPaint", "HUDPaint_DrawABox", function()
             surface.SetTextColor(color_white)
             surface.SetTextPos((ScrW() / 100) * 3.5, (ScrH() / 100) * 89)
             surface.DrawText("Kills: " .. ply:Frags() .. " | Deaths: " .. ply:Deaths())
+            -- team 1 name shadow
+            surface.SetFont("DermaLarge")
+            surface.SetTextPos((ScrW() / 100) * 5.1, (ScrH() / 100) * 92.1)
+            surface.SetTextColor(25, 25, 25, 175)
+            surface.DrawText(team.GetName(1))
+            -- team 1 name
+            surface.SetFont("DermaLarge")
+            surface.SetTextPos((ScrW() / 100) * 5, (ScrH() / 100) * 92)
+            surface.SetTextColor(team.GetColor(1))
+            surface.DrawText(team.GetName(1))
+            -- VS shadow
+            surface.SetFont("DermaLarge")
+            surface.SetTextPos((ScrW() / 100) * 11.6, (ScrH() / 100) * 92.1)
+            surface.SetTextColor(25, 25, 25, 175)
+            surface.DrawText("VS.")
+            -- VS
+            surface.SetFont("DermaLarge")
+            surface.SetTextPos((ScrW() / 100) * 11.5, (ScrH() / 100) * 92)
+            surface.SetTextColor(color_white)
+            surface.DrawText("VS.")
+            -- team 2 name shadow
+            surface.SetFont("DermaLarge")
+            surface.SetTextPos((ScrW() / 100) * 16.1, (ScrH() / 100) * 92.1)
+            surface.SetTextColor(25, 25, 25, 175)
+            surface.DrawText(team.GetName(2))
+            -- team 2 name
+            surface.SetFont("DermaLarge")
+            surface.SetTextPos((ScrW() / 100) * 16, (ScrH() / 100) * 92)
+            surface.SetTextColor(team.GetColor(2))
+            surface.DrawText(team.GetName(2))
 
             -- Ammo stuff
-            if ply:GetActiveWeapon():Clip1() ~= 0 or ply:GetAmmoCount(ply:GetActiveWeapon():GetPrimaryAmmoType()) ~= 0 then
-                surface.SetFont("DermaLarge")
-                surface.SetTextColor(25, 25, 25, 175)
-                surface.SetTextPos((ScrW() / 100) * 80.1, (ScrH() / 100) * 89.1)
-                surface.DrawText(ply:GetActiveWeapon():Clip1() .. " | " .. ply:GetAmmoCount(ply:GetActiveWeapon():GetPrimaryAmmoType()))
-                surface.SetFont("DermaLarge")
-                surface.SetTextColor(color_white)
-                surface.SetTextPos((ScrW() / 100) * 80, (ScrH() / 100) * 89)
-                surface.DrawText(ply:GetActiveWeapon():Clip1() .. " | " .. ply:GetAmmoCount(ply:GetActiveWeapon():GetPrimaryAmmoType()))
+            if ply:GetActiveWeapon() ~= NULL then
+                if ply:GetActiveWeapon():Clip1() > 0 or ply:GetAmmoCount(ply:GetActiveWeapon():GetPrimaryAmmoType()) > 0 then
+                    surface.SetFont("DermaLarge")
+                    surface.SetTextColor(25, 25, 25, 175)
+                    surface.SetTextPos((ScrW() / 100) * 90.1, (ScrH() / 100) * 92.1)
+                    surface.DrawText(ply:GetActiveWeapon():Clip1() .. " | " .. ply:GetAmmoCount(ply:GetActiveWeapon():GetPrimaryAmmoType()))
+                    surface.SetFont("DermaLarge")
+                    surface.SetTextColor(color_white)
+                    surface.SetTextPos((ScrW() / 100) * 90, (ScrH() / 100) * 92)
+                    surface.DrawText(ply:GetActiveWeapon():Clip1() .. " | " .. ply:GetAmmoCount(ply:GetActiveWeapon():GetPrimaryAmmoType()))
+                end
             end
 
             if GetGlobalBool("rtdm_ffa") then
@@ -125,56 +157,26 @@ hook.Add("HUDPaint", "HUDPaint_DrawABox", function()
                     team3tickets = 0
                 end
 
-                -- team 2 ticket shadow
+                -- team 1 ticket shadow
                 surface.SetFont("DermaLarge")
                 surface.SetTextPos((ScrW() / 100) * 37.6, (ScrH() / 100) * 2.1)
                 surface.SetTextColor(25, 25, 25, 175)
-                surface.DrawText(team2tickets)
-                -- team 2 ticket
+                surface.DrawText(tostring(GetGlobalInt("rtdm_tickets_team1tickets")))
+                -- team 1 ticket
                 surface.SetFont("DermaLarge")
                 surface.SetTextPos((ScrW() / 100) * 37.5, (ScrH() / 100) * 2)
-                surface.SetTextColor(team.GetColor(2))
-                surface.DrawText(team2tickets)
-                -- team 3 ticket shadow
+                surface.SetTextColor(team.GetColor(1))
+                surface.DrawText(tostring(GetGlobalInt("rtdm_tickets_team1tickets")))
+                -- team 2 ticket shadow
                 surface.SetFont("DermaLarge")
                 surface.SetTextPos((ScrW() / 100) * 57.5, (ScrH() / 100) * 2)
-                surface.SetTextColor(team.GetColor(3))
-                surface.DrawText(team3tickets)
-                -- team 3 ticket
+                surface.SetTextColor(team.GetColor(2))
+                surface.DrawText(tostring(GetGlobalInt("rtdm_tickets_team2tickets")))
+                -- team 2 ticket
                 surface.SetFont("DermaLarge")
                 surface.SetTextPos((ScrW() / 100) * 57.6, (ScrH() / 100) * 2.1)
                 surface.SetTextColor(25, 25, 25, 175)
-                surface.DrawText(team3tickets)
-                -- team 2 name shadow
-                surface.SetFont("DermaLarge")
-                surface.SetTextPos((ScrW() / 100) * 5.1, (ScrH() / 100) * 92.1)
-                surface.SetTextColor(25, 25, 25, 175)
-                surface.DrawText(team.GetName(2))
-                -- team 2 name
-                surface.SetFont("DermaLarge")
-                surface.SetTextPos((ScrW() / 100) * 5, (ScrH() / 100) * 92)
-                surface.SetTextColor(team.GetColor(2))
-                surface.DrawText(team.GetName(2))
-                -- VS shadow
-                surface.SetFont("DermaLarge")
-                surface.SetTextPos((ScrW() / 100) * 11.6, (ScrH() / 100) * 92.1)
-                surface.SetTextColor(25, 25, 25, 175)
-                surface.DrawText("VS.")
-                -- VS
-                surface.SetFont("DermaLarge")
-                surface.SetTextPos((ScrW() / 100) * 11.5, (ScrH() / 100) * 92)
-                surface.SetTextColor(color_white)
-                surface.DrawText("VS.")
-                -- team 3 name shadow
-                surface.SetFont("DermaLarge")
-                surface.SetTextPos((ScrW() / 100) * 16.1, (ScrH() / 100) * 92.1)
-                surface.SetTextColor(25, 25, 25, 175)
-                surface.DrawText(team.GetName(3))
-                -- team 3 name
-                surface.SetFont("DermaLarge")
-                surface.SetTextPos((ScrW() / 100) * 16, (ScrH() / 100) * 92)
-                surface.SetTextColor(team.GetColor(3))
-                surface.DrawText(team.GetName(3))
+                surface.DrawText(tostring(GetGlobalInt("rtdm_tickets_team2tickets")))
             end
         end
     end
@@ -185,22 +187,9 @@ hook.Add("HUDPaint", "HUDPaint_DrawABox", function()
     surface.SetFont("DermaLarge")
     surface.SetTextPos((ScrW() / 100) * 47.6, (ScrH() / 100) * 2.1)
     surface.SetTextColor(25, 25, 25, 175)
-    surface.DrawText(string.ToMinutesSeconds(timer.RepsLeft("rtdm_game_timeleft")))
+    surface.DrawText(string.ToMinutesSeconds(tostring(GetGlobalInt("rtdm_game_timeleft"))))
     surface.SetFont("DermaLarge")
     surface.SetTextPos((ScrW() / 100) * 47.5, (ScrH() / 100) * 2)
     surface.SetTextColor(color_white)
-    surface.DrawText(string.ToMinutesSeconds(timer.RepsLeft("rtdm_game_timeleft")))
-end)
-
-timer.Simple(0, function()
-    if timer.Exists("rtdm_game_timeleft") then
-        timer.Adjust("rtdm_game_timeleft", 1, GetGlobalInt("rtdm_game_timeleft"), function() end)
-    else
-        timer.Create("rtdm_game_timeleft", 1, GetGlobalInt("rtdm_game_timeleft"), function() end)
-    end
-end)
-
-net.Receive("rtdm_game_sync_tickets", function()
-    team2tickets = net.ReadString()
-    team3tickets = net.ReadString()
+    surface.DrawText(string.ToMinutesSeconds(tostring(GetGlobalInt("rtdm_game_timeleft"))))
 end)
